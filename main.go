@@ -11,10 +11,12 @@ var randN = rand.New(source)
 
 func main() {
 	channel := make(chan int)
-	go generateValue(channel)
-	go generateValue(channel)
-	go generateValue(channel)
-	go generateValue(channel)
+	limiter := make(chan int, 3)
+
+	go generateValue(channel, limiter)
+	go generateValue(channel, limiter)
+	go generateValue(channel, limiter)
+	go generateValue(channel, limiter)
 
 	// x := <-channel
 	// y := <-channel
@@ -31,17 +33,17 @@ func main() {
 		}
 	}
 
-
-
 	fmt.Println(sum)
 }
 
-func generateValue(channel chan int) {
-	sleepTime := randN.Intn(3)
-	time.Sleep(time.Duration(sleepTime) * time.Second)
+func generateValue(channel chan int, limit chan int) {
+	limit <- 1
+	fmt.Println("Generating value...")
+	// sleepTime := randN.Intn(3)
+	time.Sleep(time.Duration(4) * time.Second)
 
 	channel <- randN.Intn(10)
-
+	<-limit
 }
 
 // func main() {
