@@ -13,11 +13,25 @@ func main() {
 	channel := make(chan int)
 	go generateValue(channel)
 	go generateValue(channel)
+	go generateValue(channel)
+	go generateValue(channel)
 
-	x := <-channel
-	y := <-channel
+	// x := <-channel
+	// y := <-channel
 
-	sum := x + y
+	// sum := x + y
+	var sum int
+	var index int
+
+	for num := range channel {
+		sum += num
+		index++
+		if index == 4 {
+			close(channel)
+		}
+	}
+
+
 
 	fmt.Println(sum)
 }
@@ -27,6 +41,7 @@ func generateValue(channel chan int) {
 	time.Sleep(time.Duration(sleepTime) * time.Second)
 
 	channel <- randN.Intn(10)
+
 }
 
 // func main() {
