@@ -10,19 +10,23 @@ var source = rand.NewSource(time.Now().Unix())
 var randN = rand.New(source)
 
 func main() {
-	x := generateValue()
-	y := generateValue()
+	channel := make(chan int)
+	go generateValue(channel)
+	go generateValue(channel)
+
+	x := <-channel
+	y := <-channel
 
 	sum := x + y
 
 	fmt.Println(sum)
 }
 
-func generateValue() int {
+func generateValue(channel chan int) {
 	sleepTime := randN.Intn(3)
 	time.Sleep(time.Duration(sleepTime) * time.Second)
 
-	return randN.Intn(10)
+	channel <- randN.Intn(10)
 }
 
 // func main() {
