@@ -9,9 +9,32 @@ import (
 var source = rand.NewSource(time.Now().Unix())
 var randN = rand.New(source)
 
+func selectFn() {
+	limiter := make(chan int, 3)
+
+	y := make(chan int)
+	x := make(chan int)
+
+	go generateValue(y, limiter)
+	go generateValue(x, limiter)
+
+	var a int
+	var b int
+
+	select{
+	case a = <- y:
+		fmt.Printf("a first %v \n", a)
+	case b = <- x:
+		fmt.Printf("b first %v \n", b)
+	}  
+
+}
+
 func main() {
 	channel := make(chan int)
 	limiter := make(chan int, 3)
+
+	selectFn()
 
 	go generateValue(channel, limiter)
 	go generateValue(channel, limiter)
